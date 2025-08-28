@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+# allow manual trigger
+
+env:
+  ProjName: FriendlyFires
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      packages: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Build
+      run: dotnet build ${{ env.ProjName }}/${{ env.ProjName }}.csproj -o Out
+
+    - name : Upload
+      uses: actions/upload-artifact@v4.3.5
+      with:
+        name: ${{ env.ProjName }}
+        path: Out/*
