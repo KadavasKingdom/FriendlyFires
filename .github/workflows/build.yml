@@ -8,6 +8,8 @@ on:
 
 env:
   ProjName: FriendlyFires
+  REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
+  REFERENCES_PATH: ${{ github.workspace }}/References
 
 jobs:
   build:
@@ -22,6 +24,18 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+
+    - name: Download References
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri ${{ env.REFERENCES_URL }} -OutFile "${{ github.workspace }}/References.zip"
+        Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
+
+    - name: Rename Assembly-CSharp-Publicized to Assembly-CSharp
+      shell: pwsh
+      run: |
+          Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
+          
     - name: Build
       run: dotnet build ${{ env.ProjName }}/${{ env.ProjName }}.csproj -o Out
 
