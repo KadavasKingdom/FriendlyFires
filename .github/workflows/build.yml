@@ -37,6 +37,8 @@ jobs:
           Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
           
     - name: Build
+      env:
+        SL_REFERENCES: ${{ env.REFERENCES_PATH }}
       run: dotnet build ${{ env.ProjName }}/${{ env.ProjName }}.csproj -o Out
 
     - name : Upload
